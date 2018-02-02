@@ -1,6 +1,6 @@
 ## What is this?
 
-This is a ansible dynamic inventory script that retrieves hosts from Cloudera Manager.
+This script is an ansible dynamic inventory script that retrieves hosts from Cloudera Manager.
 
 ## Usage
 
@@ -18,7 +18,7 @@ Put the settings into `[dicm]` section.  You can use `%(KEY)s` style interpolati
 | Key | Description |
 | --- | --- |
 | `cloudera_manager_host` | Host name / IP address of Cloudera Manager |
-| `loudera_manager_port` | Port number (optional - defaults to 7180) |
+| `cloudera_manager_port` | Port number (optional - defaults to 7180) |
 | `cloudera_manager_user` | Cloudera Manager user |
 | `cloudera_manager_password` | Cloudera Manager password |
 | `filter` | Host filter (optional); accepts jinja2 expressions |
