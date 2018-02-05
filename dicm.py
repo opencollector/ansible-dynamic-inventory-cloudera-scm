@@ -135,20 +135,25 @@ def main():
                 'cm_service_names': service_names,
             }
 
-            hosts_for_clusters.setdefault(cluster_group_format.format(cluster_name, **vars_), []).append(host_name)
+            hosts_for_clusters.setdefault(cluster_group_format.format(cluster_name, **vars_), set()).add(host_name)
             for service_name in service_names:
-                hosts_for_services.setdefault(service_group_format.format(service_name, **vars_), []).append(host_name)
+                hosts_for_services.setdefault(service_group_format.format(service_name, **vars_), set()).add(host_name)
             for role_name in role_names:
-                hosts_for_roles.setdefault(role_group_format.format(role_name, **vars_), []).append(host_name)
+                hosts_for_roles.setdefault(role_group_format.format(role_name, **vars_), set()).add(host_name)
 
     resp = {
         '_meta': {
             'hostvars': hostvars,
         },
     }
-    resp.update(hosts_for_clusters)
-    resp.update(hosts_for_services)
-    resp.update(hosts_for_roles)
+    def hosts_sorted(d):
+        return {
+            k: list(sorted(v))
+            for k, v in d.items()
+        }
+    resp.update(hosts_sorted(hosts_for_clusters))
+    resp.update(hosts_sorted(hosts_for_services))
+    resp.update(hosts_sorted(hosts_for_roles))
     if six.PY2:
         json.dump(resp, sys.stdout, ensure_ascii=False, indent=2, encoding='UTF-8')
     else:
