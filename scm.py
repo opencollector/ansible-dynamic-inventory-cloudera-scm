@@ -43,11 +43,14 @@ class ConfigurationError(Exception):
 def read_config(config_file):
     parser = ConfigParser(os.environ)
     parser.read(config_file)
-    return dict(parser.items('dicm'))
+    all_items = parser.items('scm')
+    if parser.has_section('scm-di'):
+        all_items.extend(parser.items('scm-di'))
+    return dict(all_items)
 
 
 def main():
-    config_file = os.environ.get('DICM_CONFIG_FILE', 'dicm.ini')
+    config_file = os.environ.get('SCM_INI_FILE', 'scm.ini')
     if not os.path.isabs(config_file):
         dirname = os.path.dirname(sys.argv[0])
         basename = os.path.basename(config_file)
@@ -85,10 +88,10 @@ def main():
         return v
 
 
-    cm_host = get('cloudera_manager_host', 'localhost', required=True)
-    cm_port = get('cloudera_manager_port', None, as_=int, required=False)
-    cm_user = get('cloudera_manager_user', required=True)
-    cm_password = get('cloudera_manager_password', required=True)
+    cm_host = get('scm_host', 'localhost', required=True)
+    cm_port = get('scm_port', None, as_=int, required=False)
+    cm_user = get('scm_user', required=True)
+    cm_password = get('scm_password', required=True)
     cluster_group_format = get('cluster_group_format', '{}', required=True) 
     service_group_format = get('service_group_format', '{}', required=True) 
     role_group_format = get('role_group_format', '{}', required=True) 
@@ -129,10 +132,10 @@ def main():
             hostvars[host_name] = {
                 'ansible_ssh_host': ip_address,
                 'ip_address': ip_address,
-                'cm_host_id': host_id,
-                'cm_cluster_name': cluster_name,
-                'cm_role_names': role_names,
-                'cm_service_names': service_names,
+                'scm_host_id': host_id,
+                'scm_cluster_name': cluster_name,
+                'scm_role_names': role_names,
+                'scm_service_names': service_names,
             }
 
             hosts_for_clusters.setdefault(cluster_group_format.format(cluster_name, **vars_), set()).add(host_name)
